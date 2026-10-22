@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OBRASAARBO TATTOO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg1:#000;--bg2:#18181b;--bg3:#713f12;
+  --card:#ffffff;--card-text:#111;--muted:#6b7280;--line:#e5e7eb;--row:#f6f6f7;
+  --accent:#eab308;--accent-hover:#facc15;--danger:#dc2626;--ok:#16a34a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--card:#1f1f23;--card-text:#f4f4f5;--muted:#a1a1aa;--line:#34343a;--row:#2a2a30}
+}
+:root[data-theme="dark"]{--card:#1f1f23;--card-text:#f4f4f5;--muted:#a1a1aa;--line:#34343a;--row:#2a2a30}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:'Montserrat',system-ui,sans-serif;color:#fff;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2) 55%,var(--bg3)) fixed;padding:40px 20px 60px}
+.wrap{max-width:980px;margin:0 auto}
+h1{font-weight:900;letter-spacing:.14em;text-align:center;font-size:clamp(28px,6vw,52px);margin:0 0 36px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px}
+.tile{background:var(--card);color:var(--card-text);border-radius:32px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.45);
+  display:flex;flex-direction:column;transition:transform .2s}
+.tile:hover{transform:translateY(-4px)}
+.hero{height:180px;display:grid;place-items:center;font-size:80px;
+  background:radial-gradient(circle at 30% 20%,#facc15,#a16207 60%,#422006)}
+.tile h2{margin:0;padding:26px 16px 6px;text-align:center;font-weight:900;letter-spacing:.08em;font-size:22px;text-transform:uppercase}
+.tile p{margin:0;padding:0 16px 22px;text-align:center;color:var(--muted);font-size:14px;font-weight:500}
+.big{border:0;background:var(--accent);color:#000;font:900 17px 'Montserrat',sans-serif;padding:22px;cursor:pointer;
+  text-transform:uppercase;letter-spacing:.04em;transition:background .15s,transform .1s;margin-top:auto}
+.big:hover{background:var(--accent-hover)}.big:active{transform:scale(.98)}
+.panel{display:none;background:var(--card);color:var(--card-text);border-radius:32px;box-shadow:0 20px 50px rgba(0,0,0,.45);
+  padding:24px;max-width:780px;margin:0 auto}
+.panel.show{display:block}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.top h2{margin:0;font-weight:900;letter-spacing:.06em;font-size:20px;flex:1;text-transform:uppercase}
+.btn{border:0;border-radius:999px;padding:10px 18px;font:700 13px 'Montserrat',sans-serif;cursor:pointer;background:var(--row);color:var(--card-text)}
+.btn:hover{filter:brightness(.95)}
+.btn.y{background:var(--accent);color:#000}
+.btn.r{background:var(--danger);color:#fff}
+.bar{height:12px;border-radius:999px;background:var(--row);overflow:hidden;margin-bottom:6px}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .3s}
+.small{color:var(--muted);font-size:13px;font-weight:500;margin-bottom:16px}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;flex-wrap:wrap;gap:10px 12px;background:var(--row);border-radius:20px;padding:12px 16px;font-weight:700;font-size:14px;letter-spacing:.03em}
+.item .name{flex:1;min-width:120px}
+label.item{cursor:pointer;flex-wrap:nowrap}
+label.item input{width:22px;height:22px;accent-color:var(--accent)}
+label.item.done .name{text-decoration:line-through;color:var(--muted)}
+.row2{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;flex-wrap:wrap}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:36px;height:36px;border-radius:50%;border:0;background:var(--accent);color:#000;font:900 20px 'Montserrat',sans-serif;cursor:pointer;line-height:1}
+.qty button.minus{background:var(--card);color:var(--card-text);border:2px solid var(--line)}
+.qty button:active{transform:scale(.92)}
+.qty b{min-width:52px;text-align:center;font-size:18px;font-weight:900}
+.pctin{width:90px;border:2px solid var(--line);background:var(--card);color:var(--card-text);border-radius:999px;padding:8px 12px;font:800 16px 'Montserrat',sans-serif;text-align:center}
+.left{width:100%;font-size:12px;color:var(--muted);font-weight:700}
+.subs{width:100%;display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.sub{background:var(--card);border-radius:16px;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+.sub.low{outline:2px solid var(--danger)}
+.sub.low b{color:var(--danger)}
+.item.low{outline:2px solid var(--danger)}
+.item.low b,.item.low .qin,.sub.low .qin{color:var(--danger)}
+.qin{width:76px;border:2px solid var(--line);background:var(--card);color:var(--card-text);border-radius:999px;padding:7px 8px;font:900 17px 'Montserrat',sans-serif;text-align:center}
+.tag{font-size:10px;background:var(--danger);color:#fff;border-radius:999px;padding:3px 8px;font-weight:900}
+.mode{border:2px solid var(--line);background:var(--card);color:var(--card-text);border-radius:999px;font:800 11px 'Montserrat',sans-serif;padding:5px 10px;cursor:pointer}
+.del{border:0;background:none;color:var(--muted);cursor:pointer;font-size:16px}
+.price{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-weight:700}
+.price input{width:84px;border:2px solid var(--line);background:var(--card);color:var(--card-text);border-radius:999px;padding:6px 10px;font:700 13px 'Montserrat',sans-serif}
+.tools{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+input.txt{flex:1;min-width:140px;border:2px solid var(--line);background:var(--card);color:var(--card-text);border-radius:999px;padding:10px 16px;font:600 14px 'Montserrat',sans-serif}
+input.num{width:80px;flex:none;min-width:0}
+select.txt{flex:none;min-width:0}
+.sum{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.sum span{background:var(--row);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700}
+.sess{border-radius:20px;padding:14px 16px;margin-bottom:14px;background:var(--row);display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:700}
+.sess.live{background:#fef3c7;color:#422006;outline:2px solid var(--accent)}
+.sess .grow{flex:1;min-width:140px}
+details.rep{background:var(--row);border-radius:20px;padding:14px 16px}
+details.rep summary{cursor:pointer;font-weight:800;font-size:14px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
+details.rep table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px;font-weight:600}
+details.rep th,details.rep td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+details.rep td:last-child,details.rep th:last-child{text-align:right}
+details.rep td:nth-child(2),details.rep th:nth-child(2){text-align:right;white-space:nowrap}
+.total{font-weight:900;color:var(--ok)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>OBRASAARBO TATTOO</h1>
+
+  <div id="home" class="grid">
+    <div class="tile">
+      <div class="hero">✅</div>
+      <h2>Service Checklist</h2>
+      <p>Siguraduhing kumpleto bago mag-tattoo</p>
+      <button class="big" data-go="check">Open Checklist</button>
+    </div>
+    <div class="tile">
+      <div class="hero">🎨</div>
+      <h2>Tattoo Inventory</h2>
+      <p>Stock, presyo, at session tracking</p>
+      <button class="big" data-go="inv">View Inventory</button>
+    </div>
+    <div class="tile">
+      <div class="hero">📊</div>
+      <h2>Session Reports</h2>
+      <p>Magkano ang nagamit bawat session</p>
+      <button class="big" data-go="rep">View Reports</button>
+    </div>
+  </div>
+
+  <section id="check" class="panel">
+    <div class="top"><button class="btn" data-go="home">← Back</button><h2>Tattoo Service Checklist</h2><button class="btn y" id="resetChk">Reset</button></div>
+    <div class="bar"><i id="chkBar"></i></div>
+    <div class="small" id="chkTxt"></div>
+    <div class="list" id="chkList"></div>
+  </section>
+
+  <section id="inv" class="panel">
+    <div class="top"><button class="btn" data-go="home">← Back</button><h2>Tattoo Inventory</h2></div>
+    <div class="sess" id="sessBox"></div>
+    <div class="sum"><span id="sTotal"></span><span id="sLow"></span><span id="sValue"></span></div>
+    <div class="tools"><input class="txt" id="search" placeholder="Search item…"></div>
+    <div class="tools">
+      <input class="txt" id="newName" placeholder="New item name">
+      <select class="txt" id="newMode"><option value="qty">Quantity</option><option value="pct">Percentage</option><option value="sizes">With sizes</option></select>
+      <input class="txt num" id="newQty" type="number" min="0" step="any" value="0" title="Starting amount (for Percentage: 1 = 100%)">
+      <button class="btn y" id="addItem">+ Add</button>
+    </div>
+    <div class="list" id="invList"></div>
+    <div class="small" style="margin-top:14px">
+      <b>Quantity</b> items count pieces: tap + / − or type the number directly, and the price is per piece. <b>Percentage</b> items track how full a bottle or pack is: type the amount left: 1 = 100%, 0.75 = 75%, or just type 75 for 75%. The app then shows how much money is left and how much was used. LOW = 2 pcs or 20% left. Items with sizes or colors (Cartridge Needles, Ink Cups, Inks, Tattoo Cover): tap the item name to open its list, add sizes or colors, and track each one separately. Start a session so every “−” is added to that session’s cost.
+    </div>
+  </section>
+
+  <section id="rep" class="panel">
+    <div class="top"><button class="btn" data-go="home">← Back</button><h2>Session Reports</h2></div>
+    <div class="sum"><span id="rCount"></span><span id="rTotal"></span><span id="rNow"></span></div>
+    <div class="list" id="repList"></div>
+  </section>
+</div>
+
+<script>
+const CHECK=["ALCOHOL","ARM REST","CARTRIDGE NEEDLES","CLING WRAP","DENTAL BIB","GLOVES","GRIP TAPE","INKS","MACHINE COVER","MARKER","SHAVER","STENCIL PAPER","STENCIL PRINTER","STENCIL SOLUTION","TATTOO COVER","TATTOO GLIDE","TATTOO MACHINE","TISSUE","CPL LENS","LAMP","EXTENSION CORD","INK CUPS","LIGHT WITH POLARIZER","TONGUE DEPRESSORS","DISTILLED WATER","GREEN SOAP"];
+const INV=["ALCOHOL","CARTRIDGE NEEDLES","CLING WRAP","DENTAL BIB","GLOVES","GRIP TAPE","INK CUPS","INKS","MACHINE COVER","MARKER","SHAVER","STENCIL PAPER","STENCIL SOLUTION","TATTOO COVER","TATTOO GLIDE","TISSUE","TONGUE DEPRESSORS","DISTILLED WATER","GREEN SOAP"];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const peso=n=>'₱'+(Math.round(n*100)/100).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+function load(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+let checked=load('obra-check',{});
+let stock=(load('obra-stock',null)||INV.map(n=>({n,q:0}))).map(s=>{const o={n:s.n,q:s.q||0,mode:s.mode||'qty',price:s.price||0};if(Array.isArray(s.sizes))o.sizes=s.sizes;else if(['CARTRIDGE NEEDLES','INK CUPS','INKS','TATTOO COVER'].includes(s.n))o.sizes=o.q>0?[{s:'STANDARD',q:o.q,price:o.price}]:[];return o});
+let session=load('obra-session',null);
+let history=load('obra-sessions',[]);
+
+const isPct=it=>it.mode==='pct';
+const worth=(it,amt)=>isPct(it)?amt/100*it.price:amt*it.price;
+const fmtQ=it=>isPct(it)?it.q+'%':String(it.q);
+function leftText(it){if(!(it.price>0))return 'Set a price to see the value left';return isPct(it)?'Left: '+peso(worth(it,it.q))+' of '+peso(it.price)+' · Used: '+peso(it.price-worth(it,it.q)):'Stock worth: '+peso(worth(it,it.q))}
+const isLow=it=>it.sizes?it.sizes.some(zLow):(isPct(it)?it.q<=20:it.q<=2);
+const itemValue=it=>it.sizes?it.sizes.reduce((a,z)=>a+zWorth(z,z.q),0):worth(it,it.q);
+
+function show(id){
+  ['home','check','inv','rep'].forEach(v=>{const e=$(v);
+    if(v==='home')e.style.display=id==='home'?'':'none';else e.classList.toggle('show',v===id)});
+  if(id==='rep')renderRep();
+  if(id==='inv')renderInv();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));
+
+function twoTap(btn,msg,fn){const orig=btn.textContent;btn.onclick=()=>{if(btn.dataset.arm){fn()}else{btn.dataset.arm='1';btn.textContent=msg;setTimeout(()=>{btn.dataset.arm='';btn.textContent=orig},3000)}}}
+function findUnit(key){for(const it of stock){if(it.sizes){for(const z of it.sizes)if(key===it.n+' · '+z.s)return{n:key,mode:z.mode||'qty',price:z.price}}else if(it.n===key)return it}return null}
+const openSet=new Set();
+/* Checklist */
+function renderCheck(){
+  const l=$('chkList');l.innerHTML='';
+  CHECK.forEach(n=>{
+    const lab=document.createElement('label');lab.className='item'+(checked[n]?' done':'');
+    lab.innerHTML='<input type="checkbox"'+(checked[n]?' checked':'')+'><span class="name">'+esc(n)+'</span>';
+    lab.querySelector('input').onchange=e=>{checked[n]=e.target.checked;save('obra-check',checked);renderCheck()};
+    l.appendChild(lab);
+  });
+  const done=CHECK.filter(n=>checked[n]).length;
+  $('chkBar').style.width=(done/CHECK.length*100)+'%';
+  $('chkTxt').textContent=done+' of '+CHECK.length+' ready'+(done===CHECK.length?' — all set! ✨':'');
+}
+$('resetChk').onclick=()=>{checked={};save('obra-check',checked);renderCheck()};
+
+/* Session helpers */
+function startAuto(){session={label:'Session '+(history.length+1),start:new Date().toISOString(),used:{},startValue:stock.reduce((a,s)=>a+itemValue(s),0)};save('obra-session',session)}
+function startVal(){if(!session)return 0;return session.startValue!=null?session.startValue:stock.reduce((a,s)=>a+itemValue(s),0)+sessionLines().reduce((a,l)=>a+l.cost,0)}
+function sessionLines(){
+  if(!session)return[];
+  return Object.entries(session.used).filter(([,u])=>u>0).map(([n,u])=>{
+    const it=findUnit(n);
+    if(!it)return null;
+    return{n,mode:it.mode,used:u,price:it.price,cost:worth(it,u)};
+  }).filter(Boolean);
+}
+function renderSession(){
+  const box=$('sessBox');
+  if(session){
+    const total=sessionLines().reduce((a,l)=>a+l.cost,0);
+    box.className='sess live';
+    box.innerHTML='<span class="grow">● LIVE SESSION: '+esc(session.label)+'<br>Supplies at start: '+peso(startVal())+' · Used: '+peso(total)+' · Left: '+peso(startVal()-total)+'</span><button class="btn y" id="endSess">End &amp; Save</button><button class="btn" id="cancelSess">Cancel</button>';
+    $('endSess').onclick=endSession;
+    twoTap($('cancelSess'),'Tap again to cancel',()=>{session=null;save('obra-session',null);renderInv()});
+  }else{
+    box.className='sess';
+    box.innerHTML='<input class="txt" id="sessLabel" placeholder="Session name (e.g. client name)"><button class="btn y" id="startSess">Start Session</button>';
+    $('startSess').onclick=()=>{
+      const label=$('sessLabel').value.trim()||'Session '+(history.length+1);
+      session={label,start:new Date().toISOString(),used:{},startValue:stock.reduce((a,s)=>a+itemValue(s),0)};save('obra-session',session);renderInv();
+    };
+  }
+}
+function endSession(){
+  const lines=sessionLines();
+  const total=lines.reduce((a,l)=>a+l.cost,0);
+  history.unshift({label:session.label,start:session.start,end:new Date().toISOString(),lines,total,startValue:startVal()});
+  save('obra-sessions',history);
+  session=null;save('obra-session',null);
+  show('rep');
+}
+
+/* Inventory */
+function renderSummary(){
+  const total=stock.reduce((a,s)=>a+(isPct(s)?0:s.q),0);
+  $('sTotal').textContent=stock.length+' items';
+  $('sLow').textContent=stock.filter(isLow).length+' low / out';
+  $('sValue').textContent='Stock value: '+peso(stock.reduce((a,s)=>a+itemValue(s),0));
+  renderSession();
+}
+function adjust(i,dir){setQ(i,stock[i].q+dir)}
+function setQ(i,nq){
+  const it=stock[i];
+  nq=Math.min(isPct(it)?100:Infinity,Math.max(0,nq));
+  const diff=nq-it.q;if(!diff){renderInv();return}if(diff<0&&!session)startAuto();
+  it.q=nq;
+  if(session)session.used[it.n]=Math.max(0,(session.used[it.n]||0)-diff);
+  save('obra-stock',stock);if(session)save('obra-session',session);
+  renderInv();
+}
+const zWorth=(z,a)=>z.mode==='pct'?a/100*z.price:a*z.price;
+const zLow=z=>z.mode==='pct'?z.q<=20:z.q<=2;
+const sizeLeft=z=>!(z.price>0)?'Set a price to see the value':z.mode==='pct'?'Left: '+peso(zWorth(z,z.q))+' of '+peso(z.price)+' · Used: '+peso(z.price-zWorth(z,z.q)):'Stock worth: '+peso(zWorth(z,z.q));
+function adjustSize(i,j,dir){setSizeQ(i,j,stock[i].sizes[j].q+dir)}
+function setSizeQ(i,j,nq){const it=stock[i],z=it.sizes[j];nq=Math.min(z.mode==='pct'?100:Infinity,Math.max(0,nq));const diff=nq-z.q;if(!diff){renderInv();return}if(diff<0&&!session)startAuto();z.q=nq;const k=it.n+' · '+z.s;if(session)session.used[k]=Math.max(0,(session.used[k]||0)-diff);save('obra-stock',stock);if(session)save('obra-session',session);renderInv()}
+function variantRow(it,i){
+  const open=openSet.has(it.n),total=it.sizes.reduce((a,z)=>a+(z.mode==='pct'?0:z.q),0);
+  const box=document.createElement('div');box.className='item'+(isLow(it)?' low':'');
+  box.innerHTML='<span class="name vhead" style="cursor:pointer">'+(open?'▾ ':'▸ ')+esc(it.n)+'</span>'+(isLow(it)?'<span class="tag">LOW</span>':'')+'<span style="font-size:13px;color:var(--muted)">'+total+' pcs · '+it.sizes.length+' types</span><button class="del" title="Remove item">✕</button>';
+  box.querySelector('.vhead').onclick=()=>{open?openSet.delete(it.n):openSet.add(it.n);renderInv()};
+  twoTap(box.querySelector('.del'),'Tap again to remove',()=>{stock.splice(i,1);save('obra-stock',stock);renderInv()});
+  if(!open)return box;
+  const sub=document.createElement('div');sub.className='subs';
+  it.sizes.forEach((z,j)=>{
+    const r=document.createElement('div');r.className='sub'+(zLow(z)?' low':'');
+    r.innerHTML='<div class="row2"><span class="name">'+esc(z.s)+(zLow(z)?' <span class="tag">LOW</span>':'')+'</span><select class="mode" aria-label="Counting method"><option value="qty"'+(z.mode==='pct'?'':' selected')+'>Per piece</option><option value="pct"'+(z.mode==='pct'?' selected':'')+'>Percentage</option></select><div class="qty">'+(z.mode==='pct'?'<input class="pctin" type="number" min="0" step="any" value="'+(z.q/100)+'" aria-label="Amount left (1 = 100%)"><b>= '+z.q+'%</b>':'<button class="minus" aria-label="Decrease">−</button><input class="qin" type="number" min="0" step="1" value="'+z.q+'" aria-label="Quantity"><button class="plus" aria-label="Increase">+</button>')+'</div></div><div class="row2"><label class="price">₱ <input type="number" min="0" step="0.01" placeholder="0.00" value="'+(z.price||'')+'"> '+(z.mode==='pct'?'per full unit':'per piece')+'</label><button class="del" title="Remove size">✕</button></div><div class="left">'+sizeLeft(z)+'</div>';
+    const mi=r.querySelector('.minus'),pi=r.querySelector('.pctin');if(mi){mi.onclick=()=>adjustSize(i,j,-1);r.querySelector('.qin').onchange=e=>{const v=parseInt(e.target.value);setSizeQ(i,j,isNaN(v)?z.q:v)}}if(pi)pi.onchange=e=>{const v=parseFloat(e.target.value);setSizeQ(i,j,isNaN(v)?z.q:Math.round(v>1?v:v*100))};r.querySelector('.mode').onchange=e=>{const nm=e.target.value;if(nm===(z.mode||'qty'))return;z.mode=nm;z.q=nm==='pct'?100:1;if(session)delete session.used[it.n+' · '+z.s];save('obra-stock',stock);if(session)save('obra-session',session);renderInv()};
+    const pl=r.querySelector('.plus');if(pl)pl.onclick=()=>adjustSize(i,j,1);
+    r.querySelector('.price input').onchange=e=>{z.price=Math.max(0,parseFloat(e.target.value)||0);save('obra-stock',stock);r.querySelector('.left').textContent=sizeLeft(z);renderSummary()};
+    twoTap(r.querySelector('.del'),'Tap again to remove',()=>{it.sizes.splice(j,1);save('obra-stock',stock);renderInv()});
+    sub.appendChild(r);
+  });
+  const hint=it.n==='INKS'?'New color / size (e.g. Black 1oz)':it.n==='INK CUPS'||it.n==='TATTOO COVER'?'New size (e.g. Small, Medium, Large)':'New size (e.g. 3RL, 5RL, 7RM)';
+  const add=document.createElement('div');add.className='tools';
+  add.innerHTML='<input class="txt" placeholder="'+esc(hint)+'"><select class="txt" aria-label="Counting method"><option value="qty">Per piece</option><option value="pct">Percentage</option></select><input class="txt num" type="number" min="0" step="any" value="0" title="Starting amount (Percentage: 1 = 100%)"><button class="btn y">+ Add</button>';
+  const [ni,nq]=add.querySelectorAll('input');
+  add.querySelector('button').onclick=()=>{const s=ni.value.trim().toUpperCase();if(!s)return;const md=add.querySelector('select').value;let q;if(md==='pct'){const v=parseFloat(nq.value);const f=isNaN(v)||v<=0?1:v;q=Math.min(100,Math.round(f>1?f:f*100))}else q=Math.max(0,parseInt(nq.value)||0);const ex=it.sizes.find(z=>z.s===s);if(ex&&(ex.mode||'qty')===md)ex.q=Math.min(md==='pct'?100:Infinity,ex.q+q);else if(!ex)it.sizes.push({s,q,price:0,mode:md});save('obra-stock',stock);renderInv()};
+  sub.appendChild(add);box.appendChild(sub);return box;
+}
+function renderInv(){
+  const q=$('search').value.trim().toUpperCase();
+  const l=$('invList');l.innerHTML='';
+  stock.forEach((it,i)=>{
+    if(q&&!it.n.includes(q))return;
+    if(it.sizes){l.appendChild(variantRow(it,i));return}
+    const row=document.createElement('div');row.className='item'+(isLow(it)?' low':'');
+    row.innerHTML='<span class="name">'+esc(it.n)+'</span>'+(isLow(it)?'<span class="tag">LOW</span>':'')+
+      '<select class="mode" title="Counting method" aria-label="Counting method"><option value="qty"'+(isPct(it)?'':' selected')+'>Per piece</option><option value="pct"'+(isPct(it)?' selected':'')+'>Percentage</option></select>'+
+      '<button class="del" title="Remove item" aria-label="Remove">✕</button>'+
+      '<div class="row2">'+(isPct(it)?'<div class="qty"><input class="pctin" type="number" min="0" step="any" value="'+(it.q/100)+'" aria-label="Amount left (1 = 100%)"><b>= '+it.q+'%</b></div>':'<div class="qty"><button class="minus" aria-label="Decrease">−</button><input class="qin" type="number" min="0" step="1" value="'+it.q+'" aria-label="Quantity"><button class="plus" aria-label="Increase">+</button></div>')+
+      '<label class="price">₱ <input type="number" min="0" step="0.01" placeholder="0.00" value="'+(it.price||'')+'"> '+(isPct(it)?'per full unit':'per piece')+'</label><div class="left">'+leftText(it)+'</div></div>';
+    const mi=row.querySelector('.minus'),pl=row.querySelector('.plus'),pi=row.querySelector('.pctin');
+    if(mi){mi.onclick=()=>adjust(i,-1);pl.onclick=()=>adjust(i,1);row.querySelector('.qin').onchange=e=>{const v=parseInt(e.target.value);setQ(i,isNaN(v)?it.q:v)}}
+    if(pi)pi.onchange=e=>{const v=parseFloat(e.target.value);setQ(i,isNaN(v)?it.q:Math.round(v>1?v:v*100))};
+    row.querySelector('.mode').onchange=e=>{
+      const nm=e.target.value;if(nm===it.mode)return;
+      /* no popup: confirm() is blocked on published pages */
+      it.mode=nm;it.q=nm==='pct'?100:1;
+      if(session)delete session.used[it.n];
+      save('obra-stock',stock);if(session)save('obra-session',session);renderInv();
+    };
+    twoTap(row.querySelector('.del'),'Tap again to remove',()=>{stock.splice(i,1);save('obra-stock',stock);renderInv()});
+    row.querySelector('.price input').onchange=e=>{it.price=Math.max(0,parseFloat(e.target.value)||0);save('obra-stock',stock);row.querySelector('.left').textContent=leftText(it);renderSummary()};
+    l.appendChild(row);
+  });
+  renderSummary();
+}
+$('search').oninput=renderInv;
+$('addItem').onclick=()=>{
+  const n=$('newName').value.trim().toUpperCase(),mode=$('newMode').value;
+  let q;if(mode==='pct'){const v=parseFloat($('newQty').value);const f=isNaN(v)||v<=0?1:v;q=Math.min(100,Math.round(f>1?f:f*100))}else q=Math.max(0,parseInt($('newQty').value)||0);
+  if(!n)return;
+  const ex=stock.find(s=>s.n===n);
+  if(ex&&!ex.sizes)ex.q+=q;else if(!ex)stock.push(mode==='sizes'?{n,q:0,mode:'qty',price:0,sizes:[]}:{n,q,mode,price:0});
+  $('newName').value='';$('newQty').value=0;save('obra-stock',stock);renderInv();
+};
+
+/* Reports */
+function renderRep(){
+  const l=$('repList');l.innerHTML='';
+  $('rCount').textContent=history.length+' sessions';
+  $('rTotal').textContent='Total consumed: '+peso(history.reduce((a,h)=>a+h.total,0));
+  $('rNow').textContent='Supplies now: '+peso(stock.reduce((a,s)=>a+itemValue(s),0));
+  if(!history.length&&!session){l.innerHTML='<div class="small">No sessions yet. Start a session in Inventory, press “−” as you use supplies, then End &amp; Save.</div>';return}
+  const live=session?{label:'● LIVE: '+session.label,end:new Date().toISOString(),lines:sessionLines(),total:sessionLines().reduce((a,x)=>a+x.cost,0),startValue:startVal(),live:true}:null;
+  [...(live?[live]:[]),...history].forEach((h,k)=>{const i=live?k-1:k;
+    const d=document.createElement('details');d.className='rep';
+    let bal=h.startValue;const rows=h.lines.map(x=>{if(bal!=null)bal-=x.cost;const det=x.mode==='pct'?x.used+'% of '+peso(x.price)+' (full unit)':x.used+' pc × '+peso(x.price);return '<tr><td>'+esc(x.n)+'<br><small style="color:var(--muted)">'+det+'</small></td><td>− '+peso(x.cost)+'</td><td>'+(bal!=null?peso(bal):'')+'</td></tr>'}).join('')||'<tr><td colspan="3">No supplies used</td></tr>';
+    const foot=h.startValue!=null?'<tr><td><b>Total deducted</b></td><td><b>− '+peso(h.total)+'</b></td><td></td></tr><tr><td colspan="2"><b>Remaining supplies</b></td><td><b>'+peso(h.startValue-h.total)+'</b></td></tr>':'';
+    d.innerHTML='<summary><span>'+esc(h.label)+' · '+new Date(h.end).toLocaleString()+'</span><span class="total">Used '+peso(h.total)+(h.startValue!=null?' · Left '+peso(h.startValue-h.total):'')+'</span></summary>'+
+      '<table><tr><th>Item</th><th>Deducted</th><th>Supplies left</th></tr>'+(h.startValue!=null?'<tr><td><b>Total supplies (before session)</b></td><td></td><td><b>'+peso(h.startValue)+'</b></td></tr>':'')+''+rows+foot+'</table>'+
+      (h.live?'':'<div style="margin-top:12px"><button class="btn r">Delete session</button></div>');
+    d.open=!!h.live;if(!h.live)twoTap(d.querySelector('.btn'),'Tap again to delete',()=>{history.splice(i,1);save('obra-sessions',history);renderRep()});
+    l.appendChild(d);
+  });
+}
+renderCheck();show('home');
+</script>
+</body>
+</html>
