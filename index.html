@@ -23,7 +23,7 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;font-family:'Montserrat',system-ui,sans-serif;color:#fff;
-  background:linear-gradient(135deg,var(--bg1),var(--bg2) 55%,var(--bg3)) fixed;padding:40px 20px 60px}
+  background:linear-gradient(135deg,var(--bg1),var(--bg2) 55%,var(--bg3)) fixed;padding:40px 20px 90px}
 .wrap{max-width:980px;margin:0 auto}
 h1{font-weight:900;letter-spacing:.14em;text-align:center;font-size:clamp(28px,6vw,52px);margin:0 0 36px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px}
@@ -96,6 +96,17 @@ details.rep th,details.rep td{text-align:left;padding:6px 4px;border-bottom:1px 
 .tform .tools{margin:10px 0 0}
 .tform input[type=file]{font:600 12px 'Montserrat',sans-serif;color:var(--card-text)}
 [hidden]{display:none!important}
+.help{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:48px;height:48px;border-radius:50%;border:0;background:var(--accent);color:#000;font:900 22px 'Montserrat',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:50}
+.tut{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100}
+.tcard{background:var(--card);color:var(--card-text);border-radius:28px;max-width:440px;width:100%;max-height:88vh;overflow-y:auto;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.tcard .ico{font-size:48px;text-align:center}
+.tcard h3{margin:8px 0 10px;font-weight:900;letter-spacing:.04em;text-align:center;text-transform:uppercase;font-size:18px}
+.tcard p,.tcard li{font-size:14px;line-height:1.55;font-weight:500;margin:0 0 6px}
+.tcard ul{margin:6px 0;padding-left:20px}
+.dots{display:flex;gap:6px;justify-content:center;margin:16px 0}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent);width:22px;border-radius:999px}
+.tnav{display:flex;gap:8px;justify-content:space-between;align-items:center}
 body:not(.edit) .titlebar .btn,body:not(.edit) .tedit{display:none}
 .titlebar h1,#appLogo{cursor:pointer}
 #appLogo{height:64px;max-width:140px;object-fit:contain;border-radius:14px}
@@ -403,6 +414,33 @@ $('appLogo').onclick=()=>setEdit(!document.body.classList.contains('edit'));
 applyLogo();
 renderTiles();
 renderCheck();show('home');
+
+/* Tutorial */
+const STEPS=[
+{i:'👋',t:'Welcome!',b:`<p>This app helps you manage your tattoo studio supplies and see how much you consume every session.</p><p>The first page has tiles. Tap the yellow button on a tile to open it, and use <b>← Back</b> to return home.</p>`},
+{i:'🎨',t:'Make it yours',b:`<ul><li>Tap the <b>title</b> or <b>logo</b> to show the edit buttons.</li><li><b>✎</b> changes the title, <b>🖼</b> adds a logo, <b>✕</b> removes it.</li><li>Tap <b>✎</b> on a tile to change its photo, icon, and text.</li><li>The buttons hide again after you save.</li></ul>`},
+{i:'✅',t:'Service Checklist',b:`<ul><li>Tick each item before a client arrives. The bar shows your progress.</li><li>Add your own item in the box at the top.</li><li><b>✕</b> removes an item (tap twice to confirm).</li><li><b>Reset</b> clears the ticks for the next client.</li></ul>`},
+{i:'📦',t:'Inventory',b:`<ul><li>Use <b>+</b> and <b>−</b>, or type the number directly.</li><li>The dropdown picks <b>Per piece</b> or <b>Percentage</b>.</li><li>For percentage, type what is left: <b>1</b> = 100%, <b>0.75</b> or <b>75</b> = 75%.</li><li>Add a price: per piece, or per full unit for percentage items.</li><li>Red <b>LOW</b> means 2 pcs or 20% or less.</li></ul>`},
+{i:'📏',t:'Sizes and colors',b:`<ul><li>Tap <b>Cartridge Needles</b>, <b>Ink Cups</b>, <b>Inks</b>, or <b>Tattoo Cover</b> to open their list.</li><li>Type a size or color and press <b>+ Add</b>.</li><li>Each one has its own count, price, and Per piece / Percentage dropdown.</li><li>For other items, choose <b>With sizes</b> when you add them.</li></ul>`},
+{i:'▶️',t:'Sessions',b:`<ul><li>In Inventory, type a session name (like the client) and press <b>Start Session</b>.</li><li>Press <b>−</b> or lower the number for each supply you use.</li><li>If you forget to start, one starts automatically when you reduce an item.</li><li>When the client is done, press <b>End &amp; Save</b>.</li></ul>`},
+{i:'📊',t:'Session Reports',b:`<ul><li>Each session lists every item used, its price value, and how it was deducted from your total supplies.</li><li>The live session shows at the top while it runs.</li><li><b>Supplies now</b> is your current total value.</li><li>Tap a session to open it. Delete needs two taps.</li></ul>`},
+{i:'💡',t:'Good to know',b:`<ul><li>Set your prices first so the costs are correct.</li><li>Everything is saved on this device and browser.</li><li>Tap the yellow <b>?</b> button anytime to see this tutorial again.</li></ul>`}
+];
+let tstep=0;
+function closeTut(){const o=$('tut');if(o)o.remove();save('obra-tut-done',true)}
+function renderTut(){
+  let o=$('tut');
+  if(!o){o=document.createElement('div');o.id='tut';o.className='tut';o.onclick=e=>{if(e.target===o)closeTut()};document.body.appendChild(o)}
+  const s=STEPS[tstep],last=tstep===STEPS.length-1;
+  o.innerHTML='<div class="tcard" role="dialog" aria-modal="true"><div class="ico">'+s.i+'</div><h3>'+s.t+'</h3>'+s.b+'<div class="dots">'+STEPS.map((_,k)=>'<i class="'+(k===tstep?'on':'')+'"></i>').join('')+'</div><div class="tnav"><button class="btn" id="tSkip"'+(last?' hidden':'')+'>Skip</button><span><button class="btn" id="tBack"'+(tstep?'':' hidden')+'>Back</button> <button class="btn y" id="tNext">'+(last?'Done':'Next')+'</button></span></div></div>';
+  $('tSkip').onclick=closeTut;
+  $('tBack').onclick=()=>{tstep--;renderTut()};
+  $('tNext').onclick=()=>{if(last)closeTut();else{tstep++;renderTut()}};
+}
+function openTut(){tstep=0;renderTut()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('tut'))closeTut()});
+{const hb=document.createElement('button');hb.className='help';hb.id='helpBtn';hb.textContent='?';hb.title='How to use';hb.setAttribute('aria-label','How to use');hb.onclick=openTut;document.body.appendChild(hb)}
+if(!load('obra-tut-done',false))openTut();
 </script>
 </body>
 </html>
