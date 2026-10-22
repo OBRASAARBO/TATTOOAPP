@@ -27,7 +27,7 @@ body{margin:0;min-height:100vh;font-family:'Montserrat',system-ui,sans-serif;col
 .wrap{max-width:980px;margin:0 auto}
 h1{font-weight:900;letter-spacing:.14em;text-align:center;font-size:clamp(28px,6vw,52px);margin:0 0 36px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px}
-.tile{background:var(--card);color:var(--card-text);border-radius:32px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.45);
+.tile{position:relative;background:var(--card);color:var(--card-text);border-radius:32px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.45);
   display:flex;flex-direction:column;transition:transform .2s}
 .tile:hover{transform:translateY(-4px)}
 .hero{height:180px;display:grid;place-items:center;font-size:80px;
@@ -88,6 +88,18 @@ details.rep{background:var(--row);border-radius:20px;padding:14px 16px}
 details.rep summary{cursor:pointer;font-weight:800;font-size:14px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
 details.rep table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px;font-weight:600}
 details.rep th,details.rep td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+.titlebar{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:36px;flex-wrap:wrap}
+.titlebar h1{margin:0}
+.tedit{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:16px;cursor:pointer;z-index:1}
+.tform{position:absolute;inset:0;background:var(--card);color:var(--card-text);padding:18px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;z-index:2}
+.tform label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-top:4px}
+.tform .tools{margin:10px 0 0}
+.tform input[type=file]{font:600 12px 'Montserrat',sans-serif;color:var(--card-text)}
+[hidden]{display:none!important}
+body:not(.edit) .titlebar .btn,body:not(.edit) .tedit{display:none}
+.titlebar h1,#appLogo{cursor:pointer}
+#appLogo{height:64px;max-width:140px;object-fit:contain;border-radius:14px}
+.titlebar .btn{background:rgba(255,255,255,.14);color:#fff;font-size:16px;padding:8px 14px}
 details.rep td:last-child,details.rep th:last-child{text-align:right}
 details.rep td:nth-child(2),details.rep th:nth-child(2){text-align:right;white-space:nowrap}
 .total{font-weight:900;color:var(--ok)}
@@ -95,7 +107,7 @@ details.rep td:nth-child(2),details.rep th:nth-child(2){text-align:right;white-s
 </head>
 <body>
 <div class="wrap">
-  <h1>OBRASAARBO TATTOO</h1>
+  <div class="titlebar"><img id="appLogo" alt="Logo" hidden><h1 id="appTitle">OBRASAARBO TATTOO</h1><button class="btn" id="editTitle" title="Edit title" aria-label="Edit title">✎</button><button class="btn" id="logoBtn" title="Upload logo" aria-label="Upload logo">🖼</button><button class="btn" id="logoDel" title="Remove logo" aria-label="Remove logo" hidden>✕</button><input type="file" id="logoFile" accept="image/*" hidden></div>
 
   <div id="home" class="grid">
     <div class="tile">
@@ -120,6 +132,7 @@ details.rep td:nth-child(2),details.rep th:nth-child(2){text-align:right;white-s
 
   <section id="check" class="panel">
     <div class="top"><button class="btn" data-go="home">← Back</button><h2>Tattoo Service Checklist</h2><button class="btn y" id="resetChk">Reset</button></div>
+    <div class="tools"><input class="txt" id="newChk" placeholder="Add checklist item…"><button class="btn y" id="addChk">+ Add</button></div>
     <div class="bar"><i id="chkBar"></i></div>
     <div class="small" id="chkTxt"></div>
     <div class="list" id="chkList"></div>
@@ -159,6 +172,7 @@ function load(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 
 let checked=load('obra-check',{});
+let checkItems=load('obra-check-items',null)||CHECK.slice();
 let stock=(load('obra-stock',null)||INV.map(n=>({n,q:0}))).map(s=>{const o={n:s.n,q:s.q||0,mode:s.mode||'qty',price:s.price||0};if(Array.isArray(s.sizes))o.sizes=s.sizes;else if(['CARTRIDGE NEEDLES','INK CUPS','INKS','TATTOO COVER'].includes(s.n))o.sizes=o.q>0?[{s:'STANDARD',q:o.q,price:o.price}]:[];return o});
 let session=load('obra-session',null);
 let history=load('obra-sessions',[]);
@@ -185,17 +199,22 @@ const openSet=new Set();
 /* Checklist */
 function renderCheck(){
   const l=$('chkList');l.innerHTML='';
-  CHECK.forEach(n=>{
+  checkItems.forEach((n,idx)=>{
     const lab=document.createElement('label');lab.className='item'+(checked[n]?' done':'');
-    lab.innerHTML='<input type="checkbox"'+(checked[n]?' checked':'')+'><span class="name">'+esc(n)+'</span>';
+    lab.innerHTML='<input type="checkbox"'+(checked[n]?' checked':'')+'><span class="name">'+esc(n)+'</span><button class="del" type="button" title="Remove" aria-label="Remove">✕</button>';
     lab.querySelector('input').onchange=e=>{checked[n]=e.target.checked;save('obra-check',checked);renderCheck()};
+    twoTap(lab.querySelector('.del'),'Tap again to remove',()=>{checkItems.splice(idx,1);delete checked[n];save('obra-check-items',checkItems);save('obra-check',checked);renderCheck()});
     l.appendChild(lab);
   });
-  const done=CHECK.filter(n=>checked[n]).length;
-  $('chkBar').style.width=(done/CHECK.length*100)+'%';
-  $('chkTxt').textContent=done+' of '+CHECK.length+' ready'+(done===CHECK.length?' — all set! ✨':'');
+  const done=checkItems.filter(n=>checked[n]).length;
+  $('chkBar').style.width=(checkItems.length?done/checkItems.length*100:0)+'%';
+  $('chkTxt').textContent=done+' of '+checkItems.length+' ready'+(checkItems.length&&done===checkItems.length?' — all set! ✨':'');
 }
 $('resetChk').onclick=()=>{checked={};save('obra-check',checked);renderCheck()};
+const addChk=()=>{const n=$('newChk').value.trim().toUpperCase();if(!n||checkItems.includes(n))return;checkItems.push(n);save('obra-check-items',checkItems);$('newChk').value='';renderCheck()};
+$('addChk').onclick=addChk;
+$('newChk').onkeydown=e=>{if(e.key==='Enter')addChk()};
+$('newName').onkeydown=e=>{if(e.key==='Enter')$('addItem').click()};
 
 /* Session helpers */
 function startAuto(){session={label:'Session '+(history.length+1),start:new Date().toISOString(),used:{},startValue:stock.reduce((a,s)=>a+itemValue(s),0)};save('obra-session',session)}
@@ -338,6 +357,51 @@ function renderRep(){
     l.appendChild(d);
   });
 }
+let appTitle=load('obra-title','OBRASAARBO TATTOO');
+function applyTitle(){$('appTitle').textContent=appTitle;document.title=appTitle}
+$('editTitle').onclick=()=>{
+  const h=$('appTitle'),inp=document.createElement('input');
+  inp.className='txt';inp.value=appTitle;inp.maxLength=40;
+  inp.style.cssText="font:900 24px 'Montserrat',sans-serif;text-align:center;max-width:480px;letter-spacing:.08em";
+  h.replaceWith(inp);inp.focus();inp.select();
+  let finished=false;
+  const finish=ok=>{if(finished)return;finished=true;const v=inp.value.trim();if(ok&&v){appTitle=v;save('obra-title',appTitle)}inp.replaceWith(h);applyTitle();setEdit(false)};
+  inp.onkeydown=e=>{if(e.key==='Enter')finish(true);if(e.key==='Escape')finish(false)};
+  inp.onblur=()=>finish(true);
+};
+applyTitle();
+const TILE_DEF=[{icon:'✅',title:'Service Checklist',sub:'Siguraduhing kumpleto bago mag-tattoo',btn:'Open Checklist'},{icon:'🎨',title:'Tattoo Inventory',sub:'Stock, presyo, at session tracking',btn:'View Inventory'},{icon:'📊',title:'Session Reports',sub:'Magkano ang nagamit bawat session',btn:'View Reports'}];
+let tilesData=TILE_DEF.map((d,i)=>Object.assign({},d,(load('obra-tiles',[])||[])[i]||{}));
+function renderTiles(){
+  document.querySelectorAll('#home .tile').forEach((t,i)=>{
+    const d=tilesData[i];
+    const hero=t.querySelector('.hero');hero.textContent=d.img?'':d.icon;hero.style.backgroundImage=d.img?'url("'+d.img+'")':'';hero.style.backgroundSize=d.img?'cover':'';hero.style.backgroundPosition='center';t.querySelector('h2').textContent=d.title;
+    t.querySelector('p').textContent=d.sub;t.querySelector('.big').textContent=d.btn;
+    if(!t.querySelector('.tedit')){const b=document.createElement('button');b.className='tedit';b.textContent='✎';b.title='Edit tile';b.setAttribute('aria-label','Edit tile');b.onclick=()=>editTile(i,t);t.appendChild(b)}
+  });
+}
+function editTile(i,t){
+  const d=tilesData[i],f=document.createElement('div');f.className='tform';
+  f.innerHTML='<label>Icon (emoji)</label><input class="txt" maxlength="4"><label>Title</label><input class="txt" maxlength="30"><label>Description</label><input class="txt" maxlength="60"><label>Button text</label><input class="txt" maxlength="24"><label>Photo (replaces the icon)</label><input type="file" accept="image/*"><button class="btn rm" type="button">Remove photo</button><div class="tools"><button class="btn y sv">Save</button><button class="btn cn">Cancel</button></div>';
+  const ins=f.querySelectorAll('input');[d.icon,d.title,d.sub,d.btn].forEach((v,k)=>ins[k].value=v);
+  const b1=f.querySelector('.sv'),b2=f.querySelector('.cn'),rm=f.querySelector('.rm');let newImg=d.img||'';
+  ins[4].onchange=()=>{const fl=ins[4].files[0];if(fl)readImg(fl,800,'image/jpeg',u=>{newImg=u;rm.textContent='Remove photo (new photo ready)'})};
+  rm.onclick=()=>{newImg='';ins[4].value='';rm.textContent='Photo removed'};
+  b1.onclick=()=>{const v=[...ins].map(x=>x.value.trim());tilesData[i]={icon:v[0]||d.icon,title:v[1]||d.title,sub:v[2],btn:v[3]||d.btn,img:newImg};save('obra-tiles',tilesData);f.remove();renderTiles();setEdit(false)};
+  b2.onclick=()=>{f.remove();setEdit(false)};
+  t.appendChild(f);ins[0].focus();
+}
+function readImg(file,max,type,cb){const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*s));c.height=Math.max(1,Math.round(im.height*s));const x=c.getContext('2d');if(type==='image/jpeg'){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}x.drawImage(im,0,0,c.width,c.height);cb(c.toDataURL(type,0.82))};im.src=fr.result};fr.readAsDataURL(file)}
+let logo=load('obra-logo','');
+function applyLogo(){const im=$('appLogo');im.hidden=!logo;if(logo)im.src=logo;$('logoDel').hidden=!logo}
+$('logoBtn').onclick=()=>$('logoFile').click();
+$('logoFile').onchange=e=>{const fl=e.target.files[0];if(fl)readImg(fl,300,'image/png',u=>{logo=u;save('obra-logo',logo);applyLogo();setEdit(false)});e.target.value=''};
+$('logoDel').onclick=()=>{logo='';save('obra-logo','');applyLogo();setEdit(false)};
+function setEdit(on){document.body.classList.toggle('edit',on)}
+$('appTitle').onclick=()=>setEdit(!document.body.classList.contains('edit'));
+$('appLogo').onclick=()=>setEdit(!document.body.classList.contains('edit'));
+applyLogo();
+renderTiles();
 renderCheck();show('home');
 </script>
 </body>
